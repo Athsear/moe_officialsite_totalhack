@@ -5,7 +5,7 @@
 // @include     http://moepic.com/*
 // @include     https://moepic.com/*
 // @grant       none
-// @version     0.0.1
+// @version     1
 // ==/UserScript==
 (function(d, func) {
     var check = function() {
@@ -17,9 +17,6 @@
     s.type = 'text/javascript';
     s.src = 'http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js';
     d.getElementsByTagName('head')[0].appendChild(s);
-    
-
-
     
     (function() {
         if (check()) return;
@@ -115,6 +112,7 @@
         }
         
         function setScreen() {
+            //$("body").append($("<div>").css({"display":"none"}).attr("id","motWindow"));
             $("td.ltd2").html("");
             $("td.ltd2").css("text-align","center");
             $("td.ltd2").append($("<div>").append($("<a>").attr("href","https://moepic.com/mp_itembox/mp_itembox.php")
@@ -138,45 +136,45 @@
             );
             
             //ただし、この機能は手でブラウザのpopup blockをonにしてもらう必要あり
-            $("body").keydown(function(event) {
+            $("body").on("keydown",function(event) {
                 //alt + f
                 if( event.altKey === true && event.which === 70 ){
-                    motOw("/minigame/combine.php");
+                    openMinigame("/minigame/combine.php","f");
                 }
                 
                 //alt + r
                 else if( event.altKey === true && event.which === 82 ){
-                    motOw("/minigame/refine.php");
+                    openMinigame("/minigame/refine.php","r");
                 }
                 
                 //alt + d
                 else if( event.altKey === true && event.which === 68 ){
-                    motOw_g("/minigame/gachagacha.php?mode=mrg");
+                    openMinigame("mrg","g");
                 }
                 
                 //alt + p
                 else if( event.altKey === true && event.which === 80 ){
-                    motOw_g("/minigame/gachagacha.php?mode=mf");
+                    openMinigame("mf","g");
                 }
                 
                 //alt + e
                 else if( event.altKey === true && event.which === 69 ){
-                    motOw_g("/minigame/gachagacha.php?mode=mg");
+                    openMinigame("mg","g");
                 }
                 
                 //alt + c
                 else if( event.altKey === true && event.which === 67 ){
-                    motOw_g("/minigame/gachagacha.php?mode=mgg");
+                    openMinigame("mgg","g");
                 }
                 
                 //alt + s
                 else if( event.altKey === true && event.which === 83 ){
-                    motOw_g("/minigame/gachagacha.php?mode=mr");
+                    openMinigame("mr","g");
                 }
                 
                 //alt + g
                 else if( event.altKey === true && event.which === 71){
-                    motOw_g("/minigame/gachagacha.php?mode=md");
+                    openMinigame("md","g");
                 }
 
                 
@@ -194,8 +192,101 @@
             }
         }
         
+        function openMinigame(mode,gametype) {
+            var mHeight,mWidth,iHeight,iWidth;
+            var gamemode;
+            if(gametype == "g") {
+                mHeight ="480px";
+                mWidth = "602px";
+                iWidth = "598px";
+                iHeight = "440px";
+                gamemode = "/minigame/gachagacha.php?mode=" + mode;
+            } else {
+                mHeight = "580px";
+                mWidth = "672px";
+                iHeight = "540px"; 
+                iWidth = "668px";
+                gamemode = mode;
+            }
+            var mDialog = $("<div>")
+                .append($("<iframe>")
+                    .attr("src",gamemode)
+                    .css({
+                        "height":iHeight
+                        ,"width":iWidth
+                        })
+                )
+                .attr("id" , "motOWMinigame")
+                .append(getGradButton("閉じる","motOWCloseButton"));
+            if(gametype == "g") {
+                mDialog.append(getGradButton("アイテム一覧","motOWItemListButton"));
+            }
+                
+            mDialog
+                .css({
+                    "height":mHeight
+                    ,"width":mWidth
+                    ,"background-color" : "#F1F1ED"
+                    ,"border" : "2px solid #000000"
+                    ,"box-shadow":"0px 0px 20px 20px rgba(0,0,0,0.5)"
+                    
+                });
+            
+            mDialog.center();
+            
+            $("body").prepend(mDialog);
+            $("#motOWCloseButton").on("click",function() {
+                $("#motOWMinigame").empty();
+                $("#motOWMinigame").remove();
+                
+            });
+            if(gametype == "g") {
+                $("#motOWItemListButton").on("click",function() {
+                    window.open('/minigame/item_list.php?code='+mode, '', 'toolbar=no,location=no,directoryies=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=700');
+                });
+            }
+        }  
 
+        function getGradButton(text,id) {
+            var gButton = $("<div>")
+                    .append($("<a>")
+                        .attr({href:"javascript:void(0)",id:id})
+                        .text(text)
+                        .css({
+                            "display":"block"
+                            ,"margin-top":"0px"
+                            ,"color":"#F4F4F4"
+                            ,"font-weight":"bold"
+                            ,"text-decoration":"none"
+                            ,"font-size":"0.9em"
+                            ,"text-align" : "center"
+                        })
+                    )
+                    .css({
+                        "height":"18px"
+                        ,"width":"86px"
+                        ,"border":"1px solid #ABABAB"
+                        ,"outline":"1px solid #7B7B7B"
+                        ,"border-radius":"5px"
+                        ,"-moz-outline-radius":"5px"
+                        ,"background": "-moz-linear-gradient(top, #444444 0%, #666666 100%)"
+                        ,"margin":"10px 0 0 10px"
+                        ,"float":"left"
+                    })
+            return gButton;
+        }
+
+
+
+        jQuery.fn.center = function() {
+            this.css("position","fixed");
+            this.css("left",Math.floor($(window).width() - this.width()) / 2 +"px");
+            this.css("top",Math.floor($(window).height() - this.height()) / 2 +"px");
+            return this;
+        }
 });
+
+
 
 function motOw(url) {
     window.open(url, '_blank','width=668,height=520,status=no,scrollbars=no,directories=no,menubar=no,resizable=yes,toolbar=no');
