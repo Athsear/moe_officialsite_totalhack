@@ -135,6 +135,21 @@
                 })
             );
             
+             //var mileage = $(null).load("https://moepic.com/mileage/index.php");
+             
+             $.ajax({
+                 type:"GET"
+                 ,url : "https://moepic.com/mileage/index.php"
+                 ,dataType:"html"
+                 ,success:function(data) {
+                     var mileagePoint = $(data).find("div #content").text();
+                     mileagePoint = mileagePoint.match("[0-9]+P");
+                     $("td.ltd3 div.playernote span.txt1").eq(1).append("&nbsp;/&nbsp;"+ mileagePoint);
+                 }
+             });
+             
+             
+            
             //ただし、この機能は手でブラウザのpopup blockをonにしてもらう必要あり
             $("body").on("keydown",function(event) {
                 //alt + f
@@ -193,11 +208,16 @@
         }
         
         function openMinigame(mode,gametype) {
+            if($("#motOWMinigame").size() ) {
+                $("#motOWMinigame").empty();
+                $("#motOWMinigame").remove();
+                return false;
+            }
             var mHeight,mWidth,iHeight,iWidth;
             var gamemode;
             if(gametype == "g") {
                 mHeight ="480px";
-                mWidth = "602px";
+                mWidth = "989px";
                 iWidth = "598px";
                 iHeight = "440px";
                 gamemode = "/minigame/gachagacha.php?mode=" + mode;
@@ -214,13 +234,21 @@
                     .css({
                         "height":iHeight
                         ,"width":iWidth
+                        ,"float" : "left"
                         })
                 )
-                .attr("id" , "motOWMinigame")
-                .append(getGradButton("閉じる","motOWCloseButton"));
-            if(gametype == "g") {
-                mDialog.append(getGradButton("アイテム一覧","motOWItemListButton"));
-            }
+                .attr("id" , "motOWMinigame");
+                if(gametype=="g") {
+                    mDialog.append($("<div>").load("https://moepic.com/minigame/item_list.php?code=" + mode + " div table")
+                        .css({
+                            "float":"right"
+                            ,"overflow" : "scroll"
+                            ,"width": "368px"
+                            ,"height":"446px"
+                        })
+                    )
+                }
+                mDialog.append(getGradButton("閉じる","motOWCloseButton"));
                 
             mDialog
                 .css({
@@ -240,11 +268,6 @@
                 $("#motOWMinigame").remove();
                 
             });
-            if(gametype == "g") {
-                $("#motOWItemListButton").on("click",function() {
-                    window.open('/minigame/item_list.php?code='+mode, '', 'toolbar=no,location=no,directoryies=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=700');
-                });
-            }
         }  
 
         function getGradButton(text,id) {
@@ -285,14 +308,3 @@
             return this;
         }
 });
-
-
-
-function motOw(url) {
-    window.open(url, '_blank','width=668,height=520,status=no,scrollbars=no,directories=no,menubar=no,resizable=yes,toolbar=no');
-}
-
-function motOw_g(url) {
-  window.open(url, 'another','width=578,height=440,status=no,scrollbars=no,directories=no,menubar=no,resizable=yes,toolbar=no');
-
-}
