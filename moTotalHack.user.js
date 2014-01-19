@@ -15,7 +15,7 @@
     if (check()) return;
     var s = d.createElement('script');
     s.type = 'text/javascript';
-    s.src = 'http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js';
+    s.src = 'https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js';
     d.getElementsByTagName('head')[0].appendChild(s);
     
     (function() {
@@ -33,8 +33,6 @@
          
         //sorts
         var tool = getToolBox();
-        
-        //ページ分けは必須
         $(".newslist").before(tool);
 
         setSwitch();
@@ -87,8 +85,8 @@
         }
         
         function toggleNews(type,elem) {
-        switchNews(type);
-        toggleButton(elem);
+            switchNews(type);
+            toggleButton(elem);
         }
         
         function switchNews(type) {
@@ -150,54 +148,39 @@
              
              
             
-            //ただし、この機能は手でブラウザのpopup blockをonにしてもらう必要あり
+            // もえがちゃ統合されたっぽいので適当に変更しておきます
             $("body").on("keydown",function(event) {
-                //alt + f
+                //alt + f：練金の森
                 if( event.altKey === true && event.which === 70 ){
                     openMinigame("/minigame/combine.php","f");
                 }
                 
-                //alt + r
+                //alt + r：精錬の泉
                 else if( event.altKey === true && event.which === 82 ){
                     openMinigame("/minigame/refine.php","r");
                 }
                 
-                //alt + d
-                else if( event.altKey === true && event.which === 68 ){
+                //alt + s：期間限定ガチャ（mode:mrgは以前はDiamondだった）
+                else if( event.altKey === true && event.which === 83 ){
                     openMinigame("mrg","g");
                 }
-                
-                //alt + p
-                else if( event.altKey === true && event.which === 80 ){
-                    openMinigame("mf","g");
-                }
-                
-                //alt + e
-                else if( event.altKey === true && event.which === 69 ){
+
+                //（mode:mfは以前はPearlだったがガチャ統合により廃止された）
+                //（mggは以前はクラシックだったが、ガチャ統合により廃止された）
+
+                //alt + g（mgは以前はEmeraldだったが、これにガチャが統合された）
+                else if( event.altKey === true && event.which === 71 ){
                     openMinigame("mg","g");
                 }
-                
-                //alt + c
-                else if( event.altKey === true && event.which === 67 ){
-                    openMinigame("mgg","g");
-                }
-                
-                //alt + s
-                else if( event.altKey === true && event.which === 83 ){
-                    openMinigame("mr","g");
-                }
-                
-                //alt + g
-                else if( event.altKey === true && event.which === 71){
+
+                //（mrは動物ガチャSilverだったが、こちらも統合により廃止）                
+                //alt + a：動物ガチャ（mdは昔は動物ガチャGoldだった）
+                else if( event.altKey === true && event.which === 65){
                     openMinigame("md","g");
                 }
-
-                
             });
-            
-
         }
-        
+
         function isLogin() {
             var login = $("#login");
             if(login) {
